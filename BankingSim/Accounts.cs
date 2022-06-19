@@ -6,7 +6,21 @@ using System.Threading.Tasks;
 
 namespace LooneyBank
 {
-    public class CurrentAccount
+    public interface ICustomer
+    {
+        double Balance { get; }
+
+    }
+
+    public interface IBanker : ICustomer
+    {
+        string AccountID { get; }
+        Client Owner { get; }
+
+        void ApplyInterests();
+    }
+
+    public abstract class Account : ICustomer, IBanker
     {
         #region champs privés
         private string _accountID;
@@ -40,7 +54,7 @@ namespace LooneyBank
         }
         #endregion
 
-        #region méthodes
+        #region méthodes virtuelles et abstraites
         public virtual void Draw(double amount)
         {
             if (amount > 0 && amount < _balance)
@@ -51,6 +65,24 @@ namespace LooneyBank
             else if (amount <= 0) { Console.WriteLine("Cette opération n’a aucun sens."); }
             else if (amount > _balance) { Console.WriteLine($"Le solde du compte {_accountID} est insuffisant."); }
         }
+        protected abstract double CalculateInterests();
+        // ici elle demande à implémenter la méthode sur les parts héritées
+
+        #region vieille solution qui permettait de fonctionner pour les deux cas d'héritage
+        //protected double CalculateInterests()
+        //{
+        //    double interestRate;
+
+        //    if (this is CurrentAccount && _balance >= 0) { interestRate = .03; }
+        //    else if (this is CurrentAccount && _balance < 0) { interestRate = .0975; }
+        //    else { interestRate = 0.045; }
+
+        //    return interestRate * _balance;
+        //}
+        #endregion
+        #endregion
+
+        #region méthodes classiques
         public void Deposit(double amount)
         {
             if (amount <= 0) { Console.WriteLine("Cette opération n’a aucun sens."); }
@@ -60,9 +92,10 @@ namespace LooneyBank
                 Console.WriteLine($"{_owner.FirstName} a déposé {amount}. Il y a maintenant {amount} sur le compte {_accountID}");
             }
         }
+
         #endregion
 
-        #region surcharge d’opérateur
+        #region surcharges d’opérateurs
         /// <summary>
         // cette méthode fait en sorte que si on fait aaa_000 + bbb_111,
         // au lieu d’essayer d’ajouter les deux objets ensemble (ce qui n’a
@@ -73,7 +106,7 @@ namespace LooneyBank
         // qu’on veut, ici il y a quelques Console.WriteLine() pour compléter
         // les fonctionnalités.
         /// </summary>
-        public static Nullable<double> operator +(CurrentAccount a1, CurrentAccount a2)
+        public static Nullable<double> operator +(Account a1, Account a2)
         {
             if (a1._balance >= 0 && a2._balance >= 0)
             {
@@ -95,9 +128,32 @@ namespace LooneyBank
             }
         }
         #endregion
+
+        #region implémentation des interfaces
+        public void ApplyInterests()
+        {
+            _balance += CalculateInterests();
+        }
+        #endregion
     }
 
-    public class SavingsAccount : CurrentAccount
+    public class CurrentAccount : Account
+    {
+        protected override double CalculateInterests()
+        {
+            // throw new NotImplementedException();
+            // c'est VS qui par prévoyance ajoute ça dans le code au cas où on ne remplit rien
+            // pour ne pas tout casser le flow et mettre des erreurs qui empêchent la compilation
+
+            double interestRate;
+            if (Balance >= 0) { interestRate = .03; }
+            else { interestRate = .0975; }
+
+            return Balance * interestRate;
+        }
+    }
+
+    public class SavingsAccount : Account
     {
         private DateTime _lastDraw;
         public DateTime LastDraw { get { return _lastDraw; } }
@@ -117,6 +173,11 @@ namespace LooneyBank
             // la classe parente s’occuper du calcul, et juste ajouter la
             // petite procédure supplémentaire.
 
+        }
+
+        protected override double CalculateInterests()
+        {
+            return Balance * .045;
         }
     }
 }

@@ -10,6 +10,8 @@ namespace LooneyBank
     {
         static void Main(string[] args)
         {
+            // == SETUP ==
+
             #region affichage titre
             Console.WriteLine("LOONEY BANK v0.0.0.04c-redist.2022");
             Console.WriteLine("==================================");
@@ -148,7 +150,7 @@ namespace LooneyBank
                 Balance = 320.52
             };
 
-            CurrentAccount loo_002 = new SavingsAccount
+            Account loo_002 = new SavingsAccount
             {
                 Owner = daffyDuck,
                 AccountID = "LOO-002",
@@ -157,6 +159,8 @@ namespace LooneyBank
             #endregion
 
             #endregion
+
+            // == DÉBUT DU PROGRAMME ==
 
             #region indexeurs de ingBank
 
@@ -232,6 +236,14 @@ namespace LooneyBank
             Console.WriteLine(((SavingsAccount)loo_002).LastDraw);
             #endregion
 
+            Console.WriteLine();
+            Console.WriteLine();
+
+            #region test des taux d'intérêt
+            Console.WriteLine($"Le compte {mgs_006.AccountID} de {mgs_006.Owner.FirstName} contient {mgs_006.Balance}.");
+            mgs_006.ApplyInterests();
+            Console.WriteLine($"Après application des taux d'intérêt, il contient {mgs_006.Balance}");
+            #endregion
 
             // == FIN DU PROGRAMME ==
             Console.ReadLine();
