@@ -14,6 +14,7 @@ namespace LooneyBank
             Console.WriteLine("LOONEY BANK v0.0.0.04c-redist.2022");
             Console.WriteLine("==================================");
             Console.WriteLine();
+            Console.WriteLine();
             #endregion
 
             #region instanciations
@@ -45,7 +46,7 @@ namespace LooneyBank
             {
                 FirstName = "Bugs",
                 LastName = "Bunny",
-                BirthDay = new DateTime(1932, 01, 01)
+                BirthDay = new DateTime(1951, 01, 01)
             };
 
             Client minnieMouse = new Client
@@ -61,74 +62,98 @@ namespace LooneyBank
                 LastName = "Jack",
                 BirthDay = new DateTime(1997, 03, 21)
             };
+
+            Client daffyDuck = new Client
+            {
+                FirstName = "Daffy",
+                LastName = "Duck",
+                BirthDay = new DateTime(1952, 03, 05)
+            };
+
             #endregion
 
-            #region instanciation des comptes
+            #region instanciation des comptes courants
 
-            Account mgs_001 = new Account
+            CurrentAccount mgs_001 = new CurrentAccount
             {
                 AccountID = "MGS-001",
                 Owner = solidSnake,
-                InAccount = 6872.8,
+                Balance = 6872.8,
                 CreditLine = 2000
             };
 
-            Account mgs_002 = new Account
+            CurrentAccount mgs_002 = new CurrentAccount
             {
                 AccountID = "MGS-002",
                 Owner = raiden,
-                InAccount = -238.74,
+                Balance = -238.74,
                 CreditLine = 250
             };
 
-            Account mgs_003 = new Account
+            CurrentAccount mgs_003 = new CurrentAccount
             {
                 AccountID = "MGS-003",
                 Owner = solidSnake,
-                InAccount = 12.41,
+                Balance = 12.41,
                 CreditLine = 0
             };
 
-            Account mgs_004 = new Account
+            CurrentAccount mgs_004 = new CurrentAccount
             {
                 AccountID = "MGS-004",
                 Owner = solidSnake,
-                InAccount = 12888.39,
+                Balance = 12888.39,
                 CreditLine = 0
             };
 
-            Account mgs_005 = new Account
+            CurrentAccount mgs_005 = new CurrentAccount
             {
                 AccountID = "MGS-005",
                 Owner = raiden,
-                InAccount = 414.28,
+                Balance = 414.28,
                 CreditLine = 500
             };
 
-            Account dis_001 = new Account
+            CurrentAccount dis_001 = new CurrentAccount
             {
                 AccountID = "DIS-001",
                 Owner = minnieMouse,
-                InAccount = 189162000.21,
+                Balance = 189162000.21,
                 CreditLine = 100000000
             };
 
-            Account loo_001 = new Account
+            CurrentAccount loo_001 = new CurrentAccount
             {
                 AccountID = "LOO-001",
                 Owner = bugsBunny,
-                InAccount = 25.98,
+                Balance = 25.98,
                 CreditLine = 1250
             };
 
-            Account bat_001 = new Account
+            CurrentAccount bat_001 = new CurrentAccount
             {
                 AccountID = "BAT-001",
                 Owner = batMan,
-                InAccount = 780998.22,
+                Balance = 780998.22,
                 CreditLine = 100000
             };
 
+            #endregion
+
+            #region instanciation des comptes épargne
+            SavingsAccount mgs_006 = new SavingsAccount
+            {
+                Owner = raiden,
+                AccountID = "MGS-006",
+                Balance = 320.52
+            };
+
+            CurrentAccount loo_002 = new SavingsAccount
+            {
+                Owner = daffyDuck,
+                AccountID = "LOO-002",
+                Balance = 799.89
+            };
             #endregion
 
             #endregion
@@ -159,7 +184,10 @@ namespace LooneyBank
             #endregion
 
             #region recherche des comptes dans les livres
-            // indexation par objet Account
+            Console.WriteLine("Recherche des clients associés aux comptes");
+            Console.WriteLine("------------------------------------------");
+
+            // indexation par objet CurrentAccount
             Console.WriteLine($"Le compte {mgs_001.AccountID} appartient à {ingBank[mgs_001].FirstName} {ingBank[mgs_001].LastName} et il vous emmerde. Cela ne nous a pas empêchées de le retrouver par type de compte dans les les livres de sa banque.");
 
             Console.WriteLine();
@@ -171,14 +199,43 @@ namespace LooneyBank
             #endregion
 
             Console.WriteLine();
+            Console.WriteLine();
 
             #region test des surcharges d’opérateurs
+            Console.WriteLine("Test des surcharges d’opérateurs");
+            Console.WriteLine("--------------------------------");
+
             double? raidenAccountSum = mgs_002 + mgs_005;
             Console.WriteLine();
             double? snakeAccountSum = mgs_001 + mgs_003;
             #endregion
 
+            Console.WriteLine();
+            Console.WriteLine();
+
+            #region test des comptes épargne
+            Console.WriteLine("Classe SavingsAccount et polymorphisme");
+            Console.WriteLine("--------------------------------------");
+
+            mgs_006.Draw(120);
+            Console.WriteLine($"Le dernier retrait a été effectué le : {mgs_006.LastDraw}");
+
+            Console.WriteLine();
+
+            loo_002.Draw(250);
+            // on ne peut pas accéder à la propriété .LastDraw
+            // car par polymorphisme, loo_002 est de type CurrentAccount
+            // et non pas SavingsAccount, même s’il est un SavingsAccount
+            //Console.WriteLine(loo_002.LastDraw);
+
+            // on doit donc écrire avec un casting explicite
+            Console.WriteLine(((SavingsAccount)loo_002).LastDraw);
+            #endregion
+
+
+            // == FIN DU PROGRAMME ==
             Console.ReadLine();
+
         }
     }
 }

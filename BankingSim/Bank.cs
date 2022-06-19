@@ -33,7 +33,7 @@ namespace LooneyBank
 
         // on peut mettre autant d’indexeurs qu’on veut du moment que le type
         // de leur index n’est pas le même, ex:
-        // bankBooks[Account]   par type Account
+        // bankBooks[CurrentAccount]   par type CurrentAccount
         // bankBooks[123]       par type int
         // bankBooks["AAA-000"] par type string
 
@@ -48,8 +48,8 @@ namespace LooneyBank
 
         #region champs privés
         // un champ dico qui reprend tous les comptes de la banque
-        // par type d’objet Account et Client
-        private Dictionary<Account, Client> _accountsBook = new Dictionary<Account, Client>();
+        // par type d’objet CurrentAccount et Client
+        private Dictionary<CurrentAccount, Client> _accountsBook = new Dictionary<CurrentAccount, Client>();
 
         // un champ dico qui reprend tous les comptes de la banque
         // par leur _accountID et Client
@@ -57,9 +57,9 @@ namespace LooneyBank
         #endregion
 
         #region propriétés publiques
-        // propriété pour retrouver les clients à partir d’un objet Account
-        // càd la signature de cet index d’objet est de type Account
-        public Client this[Account key]
+        // propriété pour retrouver les clients à partir d’un objet CurrentAccount
+        // càd la signature de cet index d’objet est de type CurrentAccount
+        public Client this[CurrentAccount key]
         {
             get
             {
@@ -88,18 +88,45 @@ namespace LooneyBank
 
         #region méthodes de population des champs
         // méthode pour ajouter un compte via son _accountID
-        public void AddAccountByID(Account account)
+        public void AddAccountByID(CurrentAccount account)
         {
             _accountsBookByID.Add(account.AccountID, account.Owner);
         }
 
-        // méthode pour ajouter un objet Account tout entier
-        public void AddAccount(Account account)
+        // méthode pour ajouter un objet CurrentAccount tout entier
+        public void AddAccount(CurrentAccount account)
         {
             _accountsBook.Add(account, account.Owner);
         }
         #endregion
 
+        #endregion
+
+        #region surcharge d’opérateurs
+        // ici j’ai pas compris comment on était supposés faire avec une surcharge d’opérateurs?!
+        // donc juste une méthode normale
+        public double HowRichYouAre(Client client)
+        {
+            double result = 0;
+            List<CurrentAccount> accounts = new List<CurrentAccount>();
+
+            // retourner tous les comptes appairés au client dans une liste
+            foreach (KeyValuePair<CurrentAccount, Client> item in _accountsBook)
+            {
+                if (item.Value == client)
+                {
+                    accounts.Add(item.Key);
+                }
+            }
+
+            // additioner la valeur sur chaque compte retourné
+            foreach (CurrentAccount account in accounts)
+            {
+                result += account.Balance;
+            }
+
+            return result;
+        }
         #endregion
     }
 }
