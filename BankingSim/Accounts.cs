@@ -58,13 +58,8 @@ namespace LooneyBank
             get { return _creditLine; }
             private set
             {
-                if (value < 0)
-                {
-                    throw new InvalidOperationException();
-                } else
-                {
-                    _creditLine = value;
-                }
+                if (value < 0) { throw new InvalidOperationException(); }
+                else { _creditLine = value; }
             }
         }
         #endregion
@@ -77,8 +72,8 @@ namespace LooneyBank
                 _balance -= amount;
                 Console.WriteLine($"{_owner.FirstName} a retiré {amount}. Il lui reste {_balance} sur le compte {_accountID}.");
             }
-            else if (amount <= 0) { throw new SoldeInsuffisantException(); }
-            else if (amount > _balance) { Console.WriteLine($"Le solde du compte {_accountID} est insuffisant."); }
+            else if (amount <= 0) { throw new ArgumentOutOfRangeException(); }
+            else if (amount > _balance + _creditLine) { throw new SoldeInsuffisantException(); }
         }
         protected abstract double CalculateInterests();
         // ici elle demande à implémenter la méthode sur les parts héritées
