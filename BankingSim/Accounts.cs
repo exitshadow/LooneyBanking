@@ -16,42 +16,39 @@ namespace LooneyBank
     {
         string AccountID { get; }
         Client Owner { get; }
+        void SetCreditLine(double creditLine);
 
         void ApplyInterests();
     }
 
     public abstract class Account : ICustomer, IBanker
     {
-        #region champs privés
+        #region membres
         private string _accountID;
         private double _balance;
         private double _creditLine;
         private Client _owner;
         #endregion
 
-        #region propriétés publiques
+        #region propriétés
         public string AccountID
         {
             get { return _accountID; }
-            set { _accountID = value; }
+            //set { _accountID = value; }
         }
         public Client Owner
         {
             get { return _owner; }
-            set { _owner = value; }
+            //set { _owner = value; }
         }
 
         public double Balance
         {
             get { return _balance; }
-            set { _balance = value; } // à éliminer mais permettre au constructeur d’accéder à _balance
+            //set { _balance = value; }
         }
 
-        public double CreditLine
-        {
-            get { return _creditLine; }
-            set { _creditLine = value; }
-        }
+        public double CreditLine { get { return _creditLine; } }
         #endregion
 
         #region méthodes virtuelles et abstraites
@@ -134,6 +131,24 @@ namespace LooneyBank
         {
             _balance += CalculateInterests();
         }
+        public void SetCreditLine(double creditLine) { _creditLine = creditLine; }
+        #endregion
+
+        #region constructeurs
+        public Account() { _creditLine = 500; }
+
+        public Account(string accountID, Client owner) : this()
+        {
+            _accountID = accountID;
+            _owner = owner;
+        }
+
+        public Account(string accountID, Client owner, double balance) : this()
+        {
+            _accountID = accountID;
+            _owner = owner;
+            _balance = balance;
+        }
         #endregion
     }
 
@@ -150,6 +165,15 @@ namespace LooneyBank
             else { interestRate = .0975; }
 
             return Balance * interestRate;
+        }
+        public CurrentAccount() { }
+        public CurrentAccount(string accountID, Client owner, double creditLine)
+        {
+            //AccountID = accountID;
+            //Owner = owner;
+            //CreditLine = creditLine;
+
+            // rien de tout ça ne fonctionne car on n'a pas accès aux variables de la classe parente
         }
     }
 
@@ -175,9 +199,7 @@ namespace LooneyBank
 
         }
 
-        protected override double CalculateInterests()
-        {
-            return Balance * .045;
-        }
+        protected override double CalculateInterests() { return Balance * .045; }
+
     }
 }
