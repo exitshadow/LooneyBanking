@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace LooneyBank
 {
+    public class SoldeInsuffisantException : Exception
+    {
+        // ???????
+    }
+
     public interface ICustomer
     {
         double Balance { get; }
@@ -48,7 +53,20 @@ namespace LooneyBank
             //set { _balance = value; }
         }
 
-        public double CreditLine { get { return _creditLine; } }
+        public double CreditLine
+        {
+            get { return _creditLine; }
+            private set
+            {
+                if (value < 0)
+                {
+                    throw new InvalidOperationException();
+                } else
+                {
+                    _creditLine = value;
+                }
+            }
+        }
         #endregion
 
         #region méthodes virtuelles et abstraites
@@ -59,7 +77,7 @@ namespace LooneyBank
                 _balance -= amount;
                 Console.WriteLine($"{_owner.FirstName} a retiré {amount}. Il lui reste {_balance} sur le compte {_accountID}.");
             }
-            else if (amount <= 0) { Console.WriteLine("Cette opération n’a aucun sens."); }
+            else if (amount <= 0) { throw new SoldeInsuffisantException(); }
             else if (amount > _balance) { Console.WriteLine($"Le solde du compte {_accountID} est insuffisant."); }
         }
         protected abstract double CalculateInterests();
